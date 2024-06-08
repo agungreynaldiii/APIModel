@@ -1,10 +1,13 @@
 import argparse
 import cv2
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask_cors import CORS
 import os
 from ultralytics import YOLO
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
 UPLOAD_FOLDER = 'uploads'
 DETECT_FOLDER = 'runs/detect'
 
@@ -17,10 +20,10 @@ def predict_img():
         if 'file' in request.files:
             f = request.files['file']
             basepath = os.path.dirname(__file__)
-            filepath = os.path.join(basepath, UPLOAD_FOLDER, f.filename)
+            filepath = os.path.join(basepath, UPLOAD_FOLDER, f.filename) # type: ignore
             f.save(filepath)
             
-            file_extension = f.filename.rsplit('.', 1)[1].lower()
+            file_extension = f.filename.rsplit('.', 1)[1].lower() # type: ignore
             
             model = YOLO('best.pt')
 
@@ -29,13 +32,16 @@ def predict_img():
                 detections = model(img, save=True)
 
                 # Extract the class names from the detections
-                labels = [model.names[int(cls)] for cls in detections[0].boxes.cls]
+                labels = [model.names[int(cls)] for cls in detections[0].boxes.cls] # type: ignore
 
                 # Save the detected image with a generic name
                 detected_img_path = os.path.join(DETECT_FOLDER, 'image0.jpg')
                 cv2.imwrite(detected_img_path, detections[0].plot())
 
-                return jsonify({'labels': labels, 'filename': f.filename, 'detected_img_path': detected_img_path})
+                # Full URL to the detected image
+                full_detected_img_path = f"http://{request.host}/detect/image0.jpg"
+
+                return jsonify({'labels': labels, 'filename': f.filename, 'detected_img_path': full_detected_img_path})
             
     return render_template('index.html')
 
