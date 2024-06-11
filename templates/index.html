@@ -27,14 +27,15 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
         th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #f8f8f8;
         }
     </style>
 </head>
@@ -44,7 +45,7 @@
 
         <div class="form-container">
             <form class="p-3 text-center" id="upload-form" action="/" method="post" enctype="multipart/form-data">
-                <input class="form-control" type="file" name="file">
+                <input class="form-control" type="file" name="file" required>
                 <button class="btn btn-primary btn-upload" type="submit">PREDICT</button>
             </form>
 
@@ -52,13 +53,27 @@
                 <img id="uploaded-image" class="img-preview" src="" alt="Uploaded Image">
                 <img id="detected-image" class="img-preview" src="" alt="Detected Image" style="margin-top: 20px;">
                 <table id="additional-info">
-                    <tr>
-                        <th>Makanan</th>
-                        <th>Karbo</th>
-                        <th>Protein</th>
-                        <th>Lemak</th>
-                        <th>Range Kalori</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Makanan</th>
+                            <th>Karbo (g)</th>
+                            <th>Protein (g)</th>
+                            <th>Lemak (g)</th>
+                            <th>Range Kalori (kkal)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <table id="total-info">
+                    <thead>
+                        <tr>
+                            <th>Total</th>
+                            <th id="total-karbo">0 g</th>
+                            <th id="total-protein">0 g</th>
+                            <th id="total-lemak">0 g</th>
+                            <th id="total-kalori">0 kkal</th>
+                        </tr>
+                    </thead>
                 </table>
             </div>
         </div>
@@ -75,22 +90,37 @@
                 .then(data => {
                     const uploadedImg = document.getElementById('uploaded-image');
                     const detectedImg = document.getElementById('detected-image');
-                    const additionalInfoTable = document.getElementById('additional-info');
-                    additionalInfoTable.innerHTML = '<tr><th>Makanan</th><th>Karbo</th><th>Protein</th><th>Lemak</th><th>Range Kalori</th></tr>';
+                    const additionalInfoTableBody = document.querySelector('#additional-info tbody');
+                    additionalInfoTableBody.innerHTML = '';
 
                     if (data.detected_img_path) {
                         detectedImg.src = data.detected_img_path;
                         detectedImg.style.display = "block";
                     }
 
+                    let totalKarbo = 0;
+                    let totalProtein = 0;
+                    let totalLemak = 0;
+                    let totalKalori = 0;
+
                     data.additional_info.forEach(info => {
-                        const newRow = additionalInfoTable.insertRow(-1);
+                        const newRow = additionalInfoTableBody.insertRow();
                         newRow.insertCell().textContent = info.Makanan;
                         newRow.insertCell().textContent = info.Karbo;
                         newRow.insertCell().textContent = info.Protein;
                         newRow.insertCell().textContent = info.Lemak;
                         newRow.insertCell().textContent = info['Range Kalori'];
+
+                        totalKarbo += parseFloat(info.Karbo);
+                        totalProtein += parseFloat(info.Protein);
+                        totalLemak += parseFloat(info.Lemak);
+                        totalKalori += parseFloat(info['Range Kalori']);
                     });
+
+                    document.getElementById('total-karbo').textContent = `${totalKarbo.toFixed(2)} g`;
+                    document.getElementById('total-protein').textContent = `${totalProtein.toFixed(2)} g`;
+                    document.getElementById('total-lemak').textContent = `${totalLemak.toFixed(2)} g`;
+                    document.getElementById('total-kalori').textContent = `${totalKalori} kkal`;
                 });
             });
         </script>

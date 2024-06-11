@@ -31,10 +31,10 @@ def predict_img():
         if 'file' in request.files:
             f = request.files['file']
             basepath = os.path.dirname(__file__)
-            filepath = os.path.join(basepath, UPLOAD_FOLDER, f.filename)
+            filepath = os.path.join(basepath, UPLOAD_FOLDER, f.filename) # type: ignore
             f.save(filepath)
             
-            file_extension = f.filename.rsplit('.', 1)[1].lower()
+            file_extension = f.filename.rsplit('.', 1)[1].lower() # type: ignore
             
             model = YOLO('best.pt')
 
@@ -43,7 +43,7 @@ def predict_img():
                 detections = model(img, save=True)
 
                 # Extract the class names from the detections
-                labels = [model.names[int(cls)] for cls in detections[0].boxes.cls]
+                labels = [model.names[int(cls)] for cls in detections[0].boxes.cls] # type: ignore
 
                 # Get additional info from CSV
                 additional_info = []
