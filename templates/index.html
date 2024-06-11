@@ -57,20 +57,18 @@
                     const detectedImg = document.getElementById('detected-image');
                     const labelsDiv = document.getElementById('labels');
                     labelsDiv.innerHTML = '';
-
+                    // if (data.filename) {
+                    //     uploadedImg.src = '/uploads/' + data.filename;
+                    //     uploadedImg.style.display = "block";
+                    // }
                     if (data.detected_img_path) {
-                        detectedImg.src = data.detected_img_path;
+                        detectedImg.src = '/detect/' + 'image0.jpg';
                         detectedImg.style.display = "block";
                     }
-
-                    data.foods.forEach(food => {
-                        const foodElement = document.createElement('div');
-                        foodElement.innerHTML = `<strong>${food.name}</strong><br>
-                            Karbo: ${food.details.Karbo}<br>
-                            Protein: ${food.details.Protein}<br>
-                            Lemak: ${food.details.Lemak}<br>
-                            Range Kalori: ${food.details['Range Kalori']}`;
-                        labelsDiv.appendChild(foodElement);
+                    data.labels.forEach(label => {
+                        const labelElement = document.createElement('p');
+                        labelElement.textContent = label;
+                        labelsDiv.appendChild(labelElement);
                     });
                 });
             });
