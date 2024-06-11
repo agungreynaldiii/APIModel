@@ -106,10 +106,10 @@
                     data.additional_info.forEach(info => {
                         const newRow = additionalInfoTableBody.insertRow();
                         newRow.insertCell().textContent = info.Makanan;
-                        newRow.insertCell().textContent = info.Karbo;
-                        newRow.insertCell().textContent = info.Protein;
-                        newRow.insertCell().textContent = info.Lemak;
-                        newRow.insertCell().textContent = info['Range Kalori'];
+                        newRow.insertCell().textContent = `${info.Karbo} g`;
+                        newRow.insertCell().textContent = `${info.Protein} g`;
+                        newRow.insertCell().textContent = `${info.Lemak} g`;
+                        newRow.insertCell().textContent = `${info['Range Kalori']} kkal`;
 
                         totalKarbo += parseFloat(info.Karbo);
                         totalProtein += parseFloat(info.Protein);
