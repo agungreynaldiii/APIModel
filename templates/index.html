@@ -21,8 +21,20 @@
             display: none;
             margin-top: 20px;
         }
-        .labels {
+        .labels, .additional-info {
             margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
@@ -39,7 +51,15 @@
             <div class="text-center">
                 <img id="uploaded-image" class="img-preview" src="" alt="Uploaded Image">
                 <img id="detected-image" class="img-preview" src="" alt="Detected Image" style="margin-top: 20px;">
-                <div id="labels" class="labels"></div>
+                <table id="additional-info">
+                    <tr>
+                        <th>Makanan</th>
+                        <th>Karbo</th>
+                        <th>Protein</th>
+                        <th>Lemak</th>
+                        <th>Range Kalori</th>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -55,20 +75,21 @@
                 .then(data => {
                     const uploadedImg = document.getElementById('uploaded-image');
                     const detectedImg = document.getElementById('detected-image');
-                    const labelsDiv = document.getElementById('labels');
-                    labelsDiv.innerHTML = '';
-                    // if (data.filename) {
-                    //     uploadedImg.src = '/uploads/' + data.filename;
-                    //     uploadedImg.style.display = "block";
-                    // }
+                    const additionalInfoTable = document.getElementById('additional-info');
+                    additionalInfoTable.innerHTML = '<tr><th>Makanan</th><th>Karbo</th><th>Protein</th><th>Lemak</th><th>Range Kalori</th></tr>';
+
                     if (data.detected_img_path) {
-                        detectedImg.src = '/detect/' + 'image0.jpg';
+                        detectedImg.src = data.detected_img_path;
                         detectedImg.style.display = "block";
                     }
-                    data.labels.forEach(label => {
-                        const labelElement = document.createElement('p');
-                        labelElement.textContent = label;
-                        labelsDiv.appendChild(labelElement);
+
+                    data.additional_info.forEach(info => {
+                        const newRow = additionalInfoTable.insertRow(-1);
+                        newRow.insertCell().textContent = info.Makanan;
+                        newRow.insertCell().textContent = info.Karbo;
+                        newRow.insertCell().textContent = info.Protein;
+                        newRow.insertCell().textContent = info.Lemak;
+                        newRow.insertCell().textContent = info['Range Kalori'];
                     });
                 });
             });
